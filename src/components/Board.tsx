@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import {
@@ -17,14 +17,30 @@ import ColumnContainer from "./ColumnContainer";
 import TaskCard from "./TaskCard";
 
 const Board = () => {
-  const [columns, setColumns] = useState<Column[]>([
-    { id: 1, title: "To Do" },
-    { id: 2, title: "In Progress" },
-    { id: 3, title: "Done" },
-  ]);
+  const [columns, setColumns] = useState<Column[]>(() => {
+    const savedColumns = localStorage.getItem("columns");
+    return savedColumns
+      ? JSON.parse(savedColumns)
+      : [
+          { id: 1, title: "To Do" },
+          { id: 2, title: "In Progress" },
+          { id: 3, title: "Done" },
+        ];
+  });
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("columns", JSON.stringify(columns));
+  }, [columns]);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   const columnsId = useMemo(
     () => columns.map((column) => column.id),
