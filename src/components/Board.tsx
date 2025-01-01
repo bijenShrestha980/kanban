@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { Column } from "../types";
+import { Column, Id } from "../types";
+import ColumnContainer from "./ColumnContainer";
 
 const Board = () => {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -13,6 +14,11 @@ const Board = () => {
     setColumns([...columns, columnToAdd]);
   };
 
+  const deleteColumn = (id: Id) => {
+    const newColumns = columns.filter((column) => column.id !== id);
+    setColumns(newColumns);
+  };
+
   const generateId = () => {
     return Math.floor(Math.random() * 1000000);
   };
@@ -21,12 +27,11 @@ const Board = () => {
       <div className="m-auto flex gap-4">
         <div className="flex gap-4">
           {columns.map((column) => (
-            <div
+            <ColumnContainer
               key={column.id}
-              className="w-[300px] h-[500px] bg-mianBackground rounded-lg p-4"
-            >
-              <h1 className="text-2xl font-bold">{column.title}</h1>
-            </div>
+              column={column}
+              deleteColumn={deleteColumn}
+            />
           ))}
         </div>
         <button
