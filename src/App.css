@@ -7,3 +7,18 @@ body,
 #root {
   @apply box-border;
 }
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 8px;
+}
+::-webkit-scrollbar:horizontal {
+  @apply bg-transparent rounded-xl;
+}
+
+.task-scroll > ::-webkit-scrollbar-thumb {
+  @apply bg-gray-800 rounded-xl;
+}

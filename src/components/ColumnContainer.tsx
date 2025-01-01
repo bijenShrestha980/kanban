@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CirclePlus, Trash2 } from "lucide-react";
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Column, Id, Task } from "../types";
 import TaskCard from "./TaskCard";
@@ -12,6 +12,7 @@ interface Props {
   createTask: (columnId: Id) => void;
   tasks: Task[];
   deleteTask: (id: Id) => void;
+  updateTask: (id: Id, content: string) => void;
 }
 const ColumnContainer = (props: Props) => {
   const {
@@ -21,8 +22,10 @@ const ColumnContainer = (props: Props) => {
     createTask,
     tasks,
     deleteTask,
+    updateTask,
   } = props;
   const [editTitle, setEditTitle] = useState(false);
+  const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
 
   const {
     setNodeRef,
@@ -94,10 +97,17 @@ const ColumnContainer = (props: Props) => {
           <Trash2 size={20} />
         </button>
       </div>
-      <div className="flex flex-col flex-grow gap-4 p-2 overflow-x-hidden overflow-y-auto">
-        {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} deleteTask={deleteTask} />
-        ))}
+      <div className="flex flex-col flex-grow gap-2 p-2 overflow-x-hidden overflow-y-auto">
+        <SortableContext items={tasksIds}>
+          {tasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              deleteTask={deleteTask}
+              updateTask={updateTask}
+            />
+          ))}
+        </SortableContext>
       </div>
       <button
         onClick={() => createTask(column.id)}
