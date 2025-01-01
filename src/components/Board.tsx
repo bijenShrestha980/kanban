@@ -11,12 +11,14 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { Column, Id } from "../types";
+import { Column, Id, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
 
 const Board = () => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
   const columnsId = useMemo(
     () => columns.map((column) => column.id),
     [columns]
@@ -50,6 +52,20 @@ const Board = () => {
       return column;
     });
     setColumns(newColumns);
+  };
+
+  const createTask = (columnId: Id) => {
+    const taskToAdd: Task = {
+      id: generateId(),
+      columnId,
+      content: `Task ${tasks.length + 1}`,
+    };
+    setTasks([...tasks, taskToAdd]);
+  };
+
+  const deleteTask = (id: Id) => {
+    const newTasks = tasks.filter((task) => task.id !== id);
+    setTasks(newTasks);
   };
 
   const onDragStart = (e: DragStartEvent) => {
@@ -104,15 +120,18 @@ const Board = () => {
                   column={column}
                   deleteColumn={deleteColumn}
                   updateColumnTitle={updateColumnTitle}
+                  createTask={createTask}
+                  tasks={tasks.filter((task) => task.columnId === column.id)}
+                  deleteTask={deleteTask}
                 />
               ))}
             </SortableContext>
           </div>
           <button
             onClick={() => createNewColumn()}
-            className="h-[60px] w-[350px] min-w-[350px] cursor-pointer rounded-lg bg-mianBackground border-2 border-columnBackground p-4 ring-rose-500 hover:ring-2 flex gap-2"
+            className="h-fit w-[350px] min-w-[350px] cursor-pointer rounded-xl bg-mianBackground border-2 border-columnBackground p-4 ring-rose-500 hover:ring-2 flex gap-2 text-sm font-semibold  transition-all ease-in-out duration-150"
           >
-            <Plus />
+            <Plus size={20} />
             Add Column
           </button>
         </div>
@@ -123,6 +142,11 @@ const Board = () => {
                 column={activeColumn}
                 deleteColumn={deleteColumn}
                 updateColumnTitle={updateColumnTitle}
+                createTask={createTask}
+                tasks={tasks.filter(
+                  (task) => task.columnId === activeColumn.id
+                )}
+                deleteTask={deleteTask}
               />
             )}
           </DragOverlay>,
