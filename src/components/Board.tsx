@@ -42,6 +42,16 @@ const Board = () => {
     setColumns(newColumns);
   };
 
+  const updateColumnTitle = (id: Id, title: string) => {
+    const newColumns = columns.map((column) => {
+      if (column.id === id) {
+        return { ...column, title };
+      }
+      return column;
+    });
+    setColumns(newColumns);
+  };
+
   const onDragStart = (e: DragStartEvent) => {
     if (e.active.data.current?.type === "Column") {
       setActiveColumn(e.active.data.current.column);
@@ -93,6 +103,7 @@ const Board = () => {
                   key={column.id}
                   column={column}
                   deleteColumn={deleteColumn}
+                  updateColumnTitle={updateColumnTitle}
                 />
               ))}
             </SortableContext>
@@ -111,6 +122,7 @@ const Board = () => {
               <ColumnContainer
                 column={activeColumn}
                 deleteColumn={deleteColumn}
+                updateColumnTitle={updateColumnTitle}
               />
             )}
           </DragOverlay>,
