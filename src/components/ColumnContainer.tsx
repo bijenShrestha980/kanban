@@ -26,6 +26,10 @@ const ColumnContainer = (props: Props) => {
   } = props;
   const [editTitle, setEditTitle] = useState(false);
   const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
+  const count = useMemo(
+    () => tasks.filter((task) => task.columnId === column.id).length,
+    [tasks, column.id]
+  );
 
   const {
     setNodeRef,
@@ -71,7 +75,7 @@ const ColumnContainer = (props: Props) => {
       >
         <div className="flex items-center gap-2 font-semibold">
           <div className="flex justify-center items-center bg-slate-100 px-2 py-1 text-sm rounded-md">
-            0
+            {count}
           </div>
           {editTitle ? (
             <input
